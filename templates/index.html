@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSmart | Portal Corporativo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="main-container">
+        <!-- Encabezado Corporativo Limpio -->
+        <header class="hero-section">
+            <div class="logo-container">
+                <i class="fa-solid fa-leaf logo-icon"></i>
+                <div class="brand-text">
+                    <h1>AgroSmart Enterprise</h1>
+                    <span class="tagline">Plataforma Multi-Predio con IA Avanzada y Monitoreo Climático</span>
+                </div>
+            </div>
+            <p class="hero-description">
+                Sistema inteligente con gestión de múltiples parcelas, base de datos SQLite, pronóstico agroclimático en tiempo real y diagnóstico por visión IA.
+            </p>
+        </header>
+
+        <!-- Contenedor Principal -->
+        <div class="content-grid" id="main-grid">
+            <!-- Panel Lateral Retráctil -->
+            <aside class="sidebar-container" id="sidebar-panel">
+                <!-- Botón para Ocultar el Panel -->
+                <button id="hide-sidebar-btn" class="menu-toggle-btn" title="Ocultar Panel">
+                    <i class="fa-solid fa-chevron-left"></i> <span>Ocultar Panel de Funciones</span>
+                </button>
+
+                <!-- Selector con 10+ Predios Simulados -->
+                <div class="config-panel">
+                    <h3><i class="fa-solid fa-map-location-dot"></i> Selección de Parcela</h3>
+                    <div class="form-group">
+                        <label for="select-parcela">Predios Registrados</label>
+                        <select id="select-parcela" class="custom-select">
+                            <option value="1">1. Jitomate (Invernadero - Bajío)</option>
+                            <option value="2">2. Maíz Amarillo (Temporal - Sinaloa)</option>
+                            <option value="3">3. Aguacate Hass (Hortofrutícola - Michoacán)</option>
+                            <option value="4">4. Fresa (Acolchado - Zamora)</option>
+                            <option value="5">5. Agave Tequilana (Maduración - Jalisco)</option>
+                            <option value="6">6. Chile Jalapeño (Desarrollo - Chihuahua)</option>
+                            <option value="7">7. Trigo Grano (Floración - Sonora)</option>
+                            <option value="8">8. Limón Persico (Fructificación - Veracruz)</option>
+                            <option value="9">9. Sorgo Forrajero (Crecimiento - Tamaulipas)</option>
+                            <option value="10">10. Mango Ataulfo (Floración - Chiapas)</option>
+                            <option value="11">11. Vid / Uva de Mesa (Veraison - Baja California)</option>
+                            <option value="12">12. Café Arábica (Maduración - Oaxaca)</option>
+                        </select>
+                    </div>
+                    <form id="predio-form">
+                        <div class="form-group">
+                            <label for="cultivo"><i class="fa-solid fa-seedling"></i> Cultivo</label>
+                            <input type="text" id="cultivo" value="Jitomate">
+                        </div>
+                        <div class="form-group">
+                            <label for="etapa"><i class="fa-solid fa-plant-wilt"></i> Etapa Fenológica</label>
+                            <input type="text" id="etapa" value="Floración">
+                        </div>
+                        <div class="form-group">
+                            <label for="tamano"><i class="fa-solid fa-ruler-combined"></i> Superficie (Ha)</label>
+                            <input type="number" id="tamano" step="0.1" value="2.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="ubicacion"><i class="fa-solid fa-location-dot"></i> Región</label>
+                            <input type="text" id="ubicacion" value="Bajío, México">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Panel Climático -->
+                <div class="config-panel weather-card">
+                    <h3><i class="fa-solid fa-cloud-sun"></i> Clima & Riego</h3>
+                    <div class="weather-grid">
+                        <div><i class="fa-solid fa-temperature-half"></i> <span id="w-temp">--</span></div>
+                        <div><i class="fa-solid fa-droplet"></i> <span id="w-hum">--</span></div>
+                        <div><i class="fa-solid fa-cloud-rain"></i> <span id="w-rain">--</span></div>
+                    </div>
+                    <p class="weather-advice" id="w-advice">Sincronizando clima...</p>
+                </div>
+
+                <!-- Calculadora N-P-K -->
+                <div class="config-panel">
+                    <h3><i class="fa-solid fa-calculator"></i> Calculadora N-P-K</h3>
+                    <div class="form-group">
+                        <label for="dosis-ha"><i class="fa-solid fa-vial"></i> Dosis Nitrógeno (kg/Ha)</label>
+                        <input type="number" id="dosis-ha" value="150">
+                    </div>
+                    <button type="button" id="calc-btn" class="secondary-btn">
+                        <i class="fa-solid fa-bolt"></i> Calcular Insumo
+                    </button>
+                    <div id="calc-result" class="calc-result-box" style="display: none;">
+                        <span>Total: <strong id="total-output">0</strong> kg N</span>
+                    </div>
+                </div>
+
+                <!-- Bitácora y Reportes -->
+                <div class="config-panel">
+                    <h3><i class="fa-solid fa-database"></i> Bitácora & Reportes</h3>
+                    <button type="button" id="history-btn" class="secondary-btn">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Ver Historial SQLite
+                    </button>
+                    <button type="button" id="pdf-btn" class="pdf-action-btn">
+                        <i class="fa-solid fa-file-pdf"></i> Descargar Reporte PDF
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Panel Interactivo del Chat -->
+            <main class="chat-wrapper">
+                <div class="chat-header">
+                    <div class="agent-info">
+                        <!-- Botón flotante para mostrar el panel cuando está oculto -->
+                        <button id="show-sidebar-btn" class="show-sidebar-icon-btn" title="Mostrar Menú de Herramientas" style="display: none;">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                        <i class="fa-solid fa-robot agent-icon"></i>
+                        <div>
+                            <h3>Asistente Agrónomo AgroSmart</h3>
+                            <span class="status-indicator"><span class="dot"></span> Conectado a Azure & SQLite DB</span>
+                        </div>
+                    </div>
+                    <!-- Botón para Reiniciar / Nueva Conversación -->
+                    <button id="new-chat-btn" class="new-chat-btn" title="Nueva Conversación">
+                        <i class="fa-solid fa-rotate"></i> <span>Nueva Consulta</span>
+                    </button>
+                </div>
+
+                <div class="chat-box" id="chat-box">
+                    <div class="message bot-message">
+                        <i class="fa-solid fa-robot avatar"></i>
+                        <div class="message-content">
+                            ¡Bienvenido a AgroSmart Enterprise! Selecciona cualquiera de nuestros predios registrados en el menú lateral para ajustar automáticamente el entorno de cultivo. ¿En qué te ayudo hoy?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista previa de imagen adjunta -->
+                <div id="image-preview-container" style="display: none;" class="image-preview-bar">
+                    <img id="image-preview" src="" alt="Vista previa">
+                    <span id="remove-image"><i class="fa-solid fa-xmark"></i> Quitar foto</span>
+                </div>
+
+                <form class="input-area" id="chat-form">
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                    <button type="button" id="attach-btn" title="Adjuntar foto fitosanitaria">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+                    <input type="text" id="user-input" placeholder="Escriba su consulta o describa el problema..." autocomplete="off">
+                    <button type="submit" id="send-btn">
+                        <span>Enviar</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </main>
+        </div>
+
+        <footer>
+            <p>© 2026 AgroSmart Inc. - Módulo Multi-Predio Retráctil.</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Historial SQLite -->
+    <div id="history-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-database"></i> Bitácora de Consultas (SQLite)</h3>
+                <i class="fa-solid fa-xmark close-modal" id="close-modal"></i>
+            </div>
+            <div class="modal-body" id="history-list">
+                <p>Cargando registros...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Control de Visualización del Panel Desplegable
+        const hideSidebarBtn = document.getElementById('hide-sidebar-btn');
+        const showSidebarBtn = document.getElementById('show-sidebar-btn');
+        const sidebarPanel = document.getElementById('sidebar-panel');
+        const mainGrid = document.getElementById('main-grid');
+
+        hideSidebarBtn.addEventListener('click', () => {
+            sidebarPanel.classList.add('collapsed');
+            mainGrid.style.gridTemplateColumns = '0fr 1fr';
+            showSidebarBtn.style.display = 'inline-flex';
+        });
+
+        showSidebarBtn.addEventListener('click', () => {
+            sidebarPanel.classList.remove('collapsed');
+            mainGrid.style.gridTemplateColumns = '320px 1fr';
+            showSidebarBtn.style.display = 'none';
+        });
+
+        // Botón Nueva Conversación (Limpiar Chat)
+        document.getElementById('new-chat-btn').addEventListener('click', () => {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = `
+                <div class="message bot-message">
+                    <i class="fa-solid fa-robot avatar"></i>
+                    <div class="message-content">
+                        Conversación reiniciada. ¿En qué más puedo asistirte con tu cultivo?
+                    </div>
+                </div>
+            `;
+        });
+
+        // 12 Perfiles de Parcelas (Los 3 originales + 9 nuevos simulados)
+        const parcelas = {
+            "1": { cultivo: "Jitomate", etapa: "Floración", tamano: "2.5", ubicacion: "Bajío, México" },
+            "2": { cultivo: "Maíz Amarillo", etapa: "Desarrollo Vegetativo", tamano: "12.0", ubicacion: "Sinaloa, México" },
+            "3": { cultivo: "Aguacate Hass", etapa: "Fructificación", tamano: "5.0", ubicacion: "Michoacán, México" },
+            "4": { cultivo: "Fresa", etapa: "Cosecha Activa", tamano: "1.8", ubicacion: "Zamora, Michoacán" },
+            "5": { cultivo: "Agave Tequilana", etapa: "Maduración", tamano: "15.0", ubicacion: "Tequila, Jalisco" },
+            "6": { cultivo: "Chile Jalapeño", etapa: "Floración y Amarre", tamano: "4.0", ubicacion: "Delicias, Chihuahua" },
+            "7": { cultivo: "Trigo Grano", etapa: "Espigamiento", tamano: "20.0", ubicacion: "Ciudad Obregón, Sonora" },
+            "8": { cultivo: "Limón Persa", etapa: "Desarrollo de Fruto", tamano: "8.5", ubicacion: "Martínez de la Torre, Veracruz" },
+            "9": { cultivo: "Sorgo Forrajero", etapa: "Vegetativa Avanzada", tamano: "10.0", ubicacion: "Río Bravo, Tamaulipas" },
+            "10": { cultivo: "Mango Ataulfo", etapa: "Floración Temprana", tamano: "6.5", ubicacion: "Tapachula, Chiapas" },
+            "11": { cultivo: "Vid / Uva de Mesa", etapa: "Veraison (Envero)", tamano: "7.0", ubicacion: "Ensenada, Baja California" },
+            "12": { cultivo: "Café Arábica", etapa: "Maduración de Grano", tamano: "3.2", ubicacion: "Platón Sánchez / Oaxaca" }
+        };
+
+        const selectParcela = document.getElementById('select-parcela');
+        selectParcela.addEventListener('change', (e) => {
+            const p = parcelas[e.target.value];
+            if (p) {
+                document.getElementById('cultivo').value = p.cultivo;
+                document.getElementById('etapa').value = p.etapa;
+                document.getElementById('tamano').value = p.tamano;
+                document.getElementById('ubicacion').value = p.ubicacion;
+                fetchWeather(p.ubicacion);
+            }
+        });
+
+        // Consultar Clima
+        async function fetchWeather(ubicacion) {
+            try {
+                const res = await fetch('/weather', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ubicacion })
+                });
+                const data = await res.json();
+                document.getElementById('w-temp').textContent = data.temp;
+                document.getElementById('w-hum').textContent = data.humedad;
+                document.getElementById('w-rain').textContent = data.lluvia;
+                document.getElementById('w-advice').textContent = data.recomendacion_riego;
+            } catch (err) {
+                console.error("Error al cargar clima");
+            }
+        }
+        fetchWeather("Bajío, México");
+
+        // Historial SQLite Modal
+        const historyBtn = document.getElementById('history-btn');
+        const historyModal = document.getElementById('history-modal');
+        const closeModal = document.getElementById('close-modal');
+        const historyList = document.getElementById('history-list');
+
+        historyBtn.addEventListener('click', async () => {
+            historyModal.style.display = 'flex';
+            try {
+                const res = await fetch('/history');
+                const data = await res.json();
+                if (data.length === 0) {
+                    historyList.innerHTML = '<p>No hay registros en la base de datos aún.</p>';
+                    return;
+                }
+                let html = '';
+                data.forEach(item => {
+                    html += `
+                        <div class="history-item">
+                            <span class="h-date">${item.fecha} | Cultivo: <strong>${item.cultivo}</strong></span>
+                            <p><strong>Pregunta:</strong> ${item.consulta}</p>
+                            <p><strong>Respuesta:</strong> ${item.respuesta.substring(0, 120)}...</p>
+                        </div>
+                    `;
+                });
+                historyList.innerHTML = html;
+            } catch (err) {
+                historyList.innerHTML = '<p>Error al cargar el historial.</p>';
+            }
+        });
+
+        closeModal.addEventListener('click', () => historyModal.style.display = 'none');
+
+        // Imágenes y Chat
+        let base64Image = null;
+        const attachBtn = document.getElementById('attach-btn');
+        const imageInput = document.getElementById('image-input');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeImageBtn = document.getElementById('remove-image');
+
+        attachBtn.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    base64Image = ev.target.result;
+                    imagePreview.src = base64Image;
+                    imagePreviewContainer.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        removeImageBtn.addEventListener('click', () => {
+            base64Image = null;
+            imageInput.value = '';
+            imagePreviewContainer.style.display = 'none';
+        });
+
+        // Calculadora N-P-K
+        document.getElementById('calc-btn').addEventListener('click', () => {
+            const tamano = parseFloat(document.getElementById('tamano').value) || 0;
+            const dosis = parseFloat(document.getElementById('dosis-ha').value) || 0;
+            const total = tamano * dosis;
+            document.getElementById('total-output').textContent = total.toFixed(1);
+            document.getElementById('calc-result').style.display = 'block';
+            document.getElementById('user-input').value = `Requiero aplicar ${total.toFixed(1)} kg de Nitrógeno para ${tamano} hectáreas. ¿Cómo fracciono la aplicación?`;
+        });
+
+        // PDF
+        document.getElementById('pdf-btn').addEventListener('click', async () => {
+            const botMessages = document.querySelectorAll('.bot-message .message-content');
+            const lastRec = botMessages.length > 0 ? botMessages[botMessages.length - 1].innerText : "Sin recomendaciones.";
+            const payload = {
+                cultivo: document.getElementById('cultivo').value,
+                etapa: document.getElementById('etapa').value,
+                tamano: document.getElementById('tamano').value + " Hectáreas",
+                ubicacion: document.getElementById('ubicacion').value,
+                recommendation: lastRec
+            };
+            const res = await fetch('/download-pdf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "Reporte_Corporativo_AgroSmart.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+        });
+
+        // Chat Form
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatBox = document.getElementById('chat-box');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message && !base64Image) return;
+
+            const cultivo = document.getElementById('cultivo').value;
+            const etapa = document.getElementById('etapa').value;
+            const tamano = document.getElementById('tamano').value + " Ha";
+            const ubicacion = document.getElementById('ubicacion').value;
+
+            appendUserMessage(message, base64Image);
+            userInput.value = '';
+            const currentImg = base64Image;
+            base64Image = null;
+            imageInput.value = '';
+            imagePreviewContainer.style.display = 'none';
+
+            const loadingId = appendLoading();
+
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, cultivo, etapa, tamano, ubicacion, image: currentImg })
+                });
+                const data = await res.json();
+                removeLoading(loadingId);
+                appendMessage(data.response, res.ok ? 'bot' : 'bot-error');
+            } catch (err) {
+                removeLoading(loadingId);
+                appendMessage('Error de conexión con el servidor.', 'bot-error');
+            }
+        });
+
+        function appendUserMessage(text, img) {
+            const div = document.createElement('div');
+            div.classList.add('message', 'user-message');
+            let html = `<div class="message-content">`;
+            if (img) html += `<img src="${img}" style="max-width: 140px; border-radius: 6px; display: block; margin-bottom: 6px;">`;
+            if (text) html += text;
+            html += `</div>`;
+            div.innerHTML = html;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('message', `${sender}-message`);
+            div.innerHTML = (sender.includes('bot')) ? `<i class="fa-solid fa-robot avatar"></i><div class="message-content">${text}</div>` : `<div class="message-content">${text}</div>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendLoading() {
+            const id = 'load-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.classList.add('message', 'bot-message');
+            div.innerHTML = `<i class="fa-solid fa-robot avatar"></i><div class="message-content loading-dots">Procesando con Azure AI & Base de Datos<span>.</span><span>.</span><span>.</span></div>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
+        }
+        function removeLoading(id) { document.getElementById(id)?.remove(); }
+    </script>
+</body>
+</html>
