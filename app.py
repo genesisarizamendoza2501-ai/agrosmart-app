@@ -1,17 +1,23 @@
 from flask import Flask, render_template, request, jsonify, send_file
+import os
 import requests
 import io
 import sqlite3
 from datetime import datetime
+from dotenv import load_dotenv
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
+# Carga las variables del archivo .env localmente para desarrollo
+load_dotenv()
+
 app = Flask(__name__)
 
-AZURE_ENDPOINT = "Escribe tu URL de Azure OpenAI aquí"  # Reemplaza con tu endpoint de Azure OpenAI
-AZURE_API_KEY = "YOUR_AZURE_API_KEY_HERE"  # Reemplaza con tu clave de API de Azure
+# Credenciales obtenidas de forma segura desde el entorno (Azure App Service o archivo .env)
+AZURE_ENDPOINT = os.environ.get("AZURE_ENDPOINT")
+AZURE_API_KEY = os.environ.get("AZURE_API_KEY")
 
 # Inicializar Base de Datos SQLite 
 def init_db():
