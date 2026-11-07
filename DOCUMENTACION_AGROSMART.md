@@ -1,6 +1,6 @@
 # 🌱 AgroSmart Enterprise: Plataforma de Asistencia Agronómica con Inteligencia Artificial Generativa
 
-**URL de la Aplicación en Producción:** [https://agrosmart-app-amg-1.azurewebsites.net](https://agrosmart-app-amg-1.azurewebsites.net)  
+**URL de la Aplicación en Producción:** [https://agrosmart-app-amg-1-bvddd2b3eqhdhhc4.westus-01.azurewebsites.net/] 
 **Infraestructura Cloud:** Microsoft Azure (App Service + Microsoft Foundry)  
 **Modelo de IA Implementado:** `gpt-5` (Versión `2025-08-07`)  
 
@@ -63,12 +63,12 @@ La solución sigue una arquitectura moderna basada en servicios administrados de
 #### A. Despliegue del Modelo `gpt-5` en Microsoft Foundry
 En el portal de Microsoft Foundry se aprovisionó el recurso `agrosmart-ariza` en la región *East US*, logrando el estado `Succeeded` para el modelo base `gpt-5`.
 
-![Implementación del modelo gpt-5 en Microsoft Foundry](ruta/a/tu/captura_foundry.png)
+![Implementación del modelo gpt-5 en Microsoft Foundry](img/1.png)
 
 #### B. Configuración y Despliegue en Azure App Service
 La aplicación web `agrosmart-app-amg-1` fue configurada con Python 3.11, variables de entorno encriptadas y el comando de inicio `gunicorn --bind=0.0.0.0 --timeout 60 app:app` para evitar cortes por latencia en peticiones complejas.
 
-![Configuración de Azure App Service](ruta/a/tu/captura_app_service.png)
+![Configuración de Azure App Service](img/1.1.png)
 
 ---
 
@@ -90,10 +90,10 @@ Sigue estos pasos para operar la plataforma desde cualquier dispositivo con cone
 
 ### Paso 1: Acceso a la Plataforma
 1. Abre tu navegador web (Chrome, Edge, Safari o móvil) e ingresa a la URL oficial:  
-   **`https://agrosmart-app-amg-1.azurewebsites.net`**
+   **`https://agrosmart-app-amg-1-bvddd2b3eqhdhhc4.westus-01.azurewebsites.net/`**
 2. Espera a que cargue el panel principal de **AgroSmart Enterprise**.
 
-![Vista Principal de AgroSmart Enterprise](ruta/a/tu/captura_interfaz_principal.png)
+![Vista Principal de AgroSmart Enterprise](2.png)
 
 ### Paso 2: Configuración de los Datos de la Parcela Activa
 Antes de iniciar una consulta, define el contexto de tu lote en el panel de configuración de parcela:
@@ -110,7 +110,7 @@ Antes de iniciar una consulta, define el contexto de tu lote en el panel de conf
    * Selecciona una fotografía clara de la hoja, tallo o fruto afectado.
    * Presiona **Enviar** para que el modelo `gpt-5` analice la imagen y emita un diagnóstico visual junto con medidas correctivas.
 
-![Consulta y Respuesta del Agente Agrónomo](ruta/a/tu/captura_chat_respuesta.png)
+![Consulta y Respuesta del Agente Agrónomo](img/4.png)
 
 ### Paso 4: Consulta de Condiciones Agroclimáticas
 1. Revisa el panel de **Monitoreo Meteorológico** en la interfaz.
@@ -122,7 +122,7 @@ Antes de iniciar una consulta, define el contexto de tu lote en el panel de conf
    * Una vez recibida la recomendación del agente, haz clic en el botón **Descargar Reporte PDF**.
    * El sistema descargará automáticamente el archivo `Reporte_Corporativo_AgroSmart.pdf`, el cual incluye el encabezado institucional, una tabla resumen con los datos de la parcela y el dictamen técnico completo listo para imprimir o compartir.
 
-![Ejemplo de Reporte PDF Generado](ruta/a/tu/captura_pdf_generado.png)
+![Ejemplo de Reporte PDF Generado](img/5.png)
 
 ---
 
@@ -131,14 +131,23 @@ Antes de iniciar una consulta, define el contexto de tu lote en el panel de conf
 La interfaz web de **AgroSmart Enterprise** está diseñada bajo un enfoque ergonómico y corporativo, dividida en módulos interactivos clave que facilitan la labor técnica del productor:
 
 * **Selector de Parcelas Multi-Predio:** Panel de configuración rápida donde el usuario introduce o selecciona el predio activo. Define parámetros críticos como el tipo de cultivo, la etapa fenológica actual, la superficie en hectáreas y la región geográfica, los cuales se inyectan dinámicamente como contexto en cada consulta de IA.
+
+![Vista selector de parcelas](img/6.png)
+
 * **Monitor Agroclimático en Tiempo Real:** Tarjetas de telemetría visual que muestran variables meteorológicas esenciales (temperatura ambiente, humedad relativa, riesgo de lluvia y tasa de evapotranspiración en $mm/día$) para fundamentar la toma de decisiones sobre el riego.
+
+![Vista Monitor Agroclimatico en tiempo real](img/7.png)
+
 * **Asistente Agrónomo Inteligente (Agente IA):** 
   * *Diagnóstico Técnico Especializado:* Resuelve dudas sobre fertilización, control integrado de plagas (MIP), requerimientos nutricionales y manejo hídrico adaptados al cultivo en curso.
   * *Visión Artificial Fitosanitaria:* Permite adjuntar fotografías del cultivo afectado (hojas, frutos o tallos) para que el modelo `gpt-5` identifique visualmente síntomas de patógenos, carencias nutricionales o daños por insectos, emitiendo un plan de tratamiento correctivo.
+
+![Vista Asistente Agronomo Inteligente](img/8.png) 
+
 * **Bitácora Histórica de Consultas:** Visor cronológico conectado a la base de datos que permite auditar dictámenes previos, fechas de inspección y recomendaciones emitidas por predio.
 * **Generador de Dictámenes Ejecutivos (PDF):** Herramienta de exportación directa que compila de forma limpia los datos de la parcela y la evaluación reciente del agente en un formato oficial listo para archivar o entregar formalmente.
 
-![Vista general de la interfaz web y selector de parcelas](img/2.png)
+![Vista Bitacora Agronomo Inteligente](img/9.png)
 
 ---
 
@@ -153,7 +162,6 @@ El backend de la aplicación gestiona las peticiones del usuario y la interacci�
 * **`get_history()`**: Realiza consultas optimizadas (`SELECT`) sobre la base de datos para extraer los últimos registros de la bitácora y mostrarlos de forma dinámica en la interfaz.
 * **`download_pdf()`**: Emplea la librería *ReportLab* para diseñar y estructurar un reporte ejecutivo en memoria (`BytesIO`), incorporando tablas estilizadas con paleta corporativa y el dictamen técnico reciente emitido por la IA.
 
-![Configuración y despliegue en Azure App Service](img/3.png)
 
 ---
 
@@ -163,7 +171,7 @@ Para evaluar y operar **AgroSmart Enterprise**, sigue estos pasos desde la inter
 
 1. **Acceso al Portal:**
    Ingresa a la URL pública desplegada en Azure App Service:
-   👉 `https://agrosmart-app-amg-1.azurewebsites.net`
+   👉 `https://agrosmart-app-amg-1-bvddd2b3eqhdhhc4.westus-01.azurewebsites.net/`
 
 2. **Configuración de la Parcela Activa:**
    En el panel de control del predio, selecciona o completa los parámetros de tu cultivo y verifica los valores meteorológicos del monitor.
@@ -172,7 +180,6 @@ Para evaluar y operar **AgroSmart Enterprise**, sigue estos pasos desde la inter
    * Escribe tu pregunta técnica en el chat del asistente agrónomo.
    * Si deseas probar el análisis multimodal, adjunta una imagen de muestra del cultivo afectado antes de enviar la consulta.
 
-![Interacción con el Agente Agrónomo y análisis de resultados](img/4.png)
 
 ### Ejemplo Práctico para Probar la Aplicación
 Si deseas validar rápidamente todas las capacidades del sistema ante un comité o evaluación, ingresa los siguientes datos de prueba:
