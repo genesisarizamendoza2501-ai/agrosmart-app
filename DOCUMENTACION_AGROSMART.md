@@ -1,6 +1,7 @@
 # 🌱 AgroSmart Enterprise: Plataforma de Asistencia Agronómica con Inteligencia Artificial Generativa
 
 **URL de la Aplicación en Producción:** [https://agrosmart-app-amg-1-bvddd2b3eqhdhhc4.westus-01.azurewebsites.net/] 
+
 **Infraestructura Cloud:** Microsoft Azure (App Service + Microsoft Foundry)  
 **Modelo de IA Implementado:** `gpt-5` (Versión `2025-08-07`)  
 
