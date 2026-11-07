@@ -70,8 +70,8 @@ def chat():
         image_data = data.get('image', None)
 
         system_instruction = (
-            "Eres AgroSmart, un asistente agrónomo experto de nivel corporativo que apoya a productores agrícolas. "
-            "Responde de manera clara, estructurada y profesional. "
+            "Eres AgroSmart AI, un ingeniero agrónomo experto y especialista en agricultura de precisión integrado en el portal AgroSmart Enterprise. "
+            "Tu objetivo principal es asistir a productores, técnicos y administradores agrícolas en la toma de decisiones basadas en datos, optimización de cultivos y monitoreo ambiental. "
             f"DATOS DE LA PARCELA ACTIVA: Cultivo: {cultivo} | Etapa: {etapa} | Superficie: {tamano} | Ubicación: {ubicacion}."
         )
 
@@ -91,7 +91,8 @@ def chat():
         payload = {"messages": messages}
         headers = {"Content-Type": "application/json", "api-key": AZURE_API_KEY}
 
-        response = requests.post(AZURE_ENDPOINT, json=payload, headers=headers, timeout=45)
+        # Timeout aumentado a 60 segundos para evitar cortes de conexión con el modelo gpt-5
+        response = requests.post(AZURE_ENDPOINT, json=payload, headers=headers, timeout=60)
         
         if response.status_code == 200:
             result = response.json()
@@ -180,3 +181,5 @@ def download_pdf():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
+    
